@@ -33,7 +33,7 @@
 	} catch( Exception e){
 		e.printStackTrace();
 	} finally{
-		DBUtils.getInstance().close3param(connection, statement, rs);
+		DBUtils.close3param(connection, statement, rs);
 	}
 %>
 

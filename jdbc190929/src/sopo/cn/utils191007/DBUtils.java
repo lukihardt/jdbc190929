@@ -1,9 +1,10 @@
 package sopo.cn.utils191007;
 
-import java.io.IOException;  
+import java.io.IOException;   
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -110,7 +111,7 @@ public class DBUtils {
 	 * @param connection
 	 * @param statement
 	 */
-	public void close2param( Connection connection, Statement statement) {
+	public static void close2param( Connection connection, Statement statement) {
 		try {
 			if (statement != null) {
 				statement.close();
@@ -124,7 +125,7 @@ public class DBUtils {
 		}
 	}
 	
-	public void close3param( Connection connection, Statement statement, ResultSet rs) {
+	public static void close3param( Connection connection, Statement statement, ResultSet rs) {
 		try {
 			if (statement != null) {
 				statement.close();
@@ -138,6 +139,23 @@ public class DBUtils {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+	}
+	
+	//not good yet
+	public void iudPreparedStatement( String sql) {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		try {
+			connection = getConnectionViaDM();
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.execute();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close2param(connection, preparedStatement);
 		}
 	}
 }
