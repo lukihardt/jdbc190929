@@ -1,16 +1,21 @@
 package sopo.cn.utils191007;
 
-import java.io.IOException;   
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import com.mysql.cj.jdbc.Driver;
+
+import sopo.cn.model191008.Books;
 
 public class DBUtils {
 	private DBUtils() {}
@@ -157,5 +162,87 @@ public class DBUtils {
 		} finally {
 			close2param(connection, preparedStatement);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param sql
+	 * @param args
+	 * @return
+	 */
+	public static Books getBooks( String sql, Object... args) {
+		Books books = null;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		
+		try {
+			connection = DBUtils.getInstance().getConnection();
+			preparedStatement = connection.prepareStatement(sql);
+			for (int i = 0; i < args.length; i++) {
+				preparedStatement.setObject(i + 1, args[i]);
+			}
+			rs = preparedStatement.executeQuery();
+			
+			if (rs.next()) {
+				books = new Books();
+				books.setId(rs.getInt(1));
+				books.setName(rs.getString(2));
+				books.setPrice(rs.getDouble(3));
+				books.setAuthorId(rs.getInt(4));
+				books.setDate(rs.getDate("publish_date"));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			DBUtils.close3param(connection, preparedStatement, rs);
+		}
+		return books;
+	}
+	
+	public static<T> T getData(Class<T> clazz, String sql, Object... args) {
+		T entity = null;
+		Books books = null;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		
+		try {
+			////上面的
+			connection = DBUtils.getInstance().getConnection();
+			preparedStatement = connection.prepareStatement(sql);
+			for (int i = 0; i < args.length; i++) {
+				preparedStatement.setObject(i + 1, args[i]);
+			}
+			rs = preparedStatement.executeQuery();
+																////
+			
+			// 得到ResultSetMetaData对象, 调用ResultSet的getMetaData()方法
+			ResultSetMetaData rsmd = rs.getMetaData();
+			// sql语句中包含了多少列 
+			int columnCount = rsmd.getColumnCount();
+			HashMap< String, Object> columnHashMap = new HashMap<>();
+			// 获取指定列的别名,索引从1开始
+			if (rs.next()) {
+				for (int i = 1; i <= columnCount; i++) {
+					String columnLabel = rsmd.getColumnLabel(i);
+					Object columnValue = rs.getObject(columnLabel);
+					columnHashMap.put(columnLabel, columnValue);
+				}
+			}
+			
+			System.out.println(columnHashMap);
+			for ( Entry<String, Object> entry: columnHashMap.entrySet()) {
+				String key = entry.getKey();
+				Object object = entry.getValue();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+		return null;
 	}
 }
