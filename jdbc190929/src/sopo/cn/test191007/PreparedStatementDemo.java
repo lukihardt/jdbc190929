@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
-import sopo.cn.utils191007.DBUtils;
+import sopo.cn.utils191007.MyDBUtils;
 
 public class PreparedStatementDemo {
 	Connection connection = null;
@@ -16,7 +16,7 @@ public class PreparedStatementDemo {
 	public void test() {
 		// TODO Auto-generated method stub
 		try {
-			connection = DBUtils.getInstance().getConnection();
+			connection = MyDBUtils.getInstance().getConnection();
 			String sql = "INSERT INTO book VALUES( ?, ?, ?, ?, ?);";
 			ps = connection.prepareStatement(sql);
 			ps.setInt( 1, 6973);
@@ -29,7 +29,7 @@ public class PreparedStatementDemo {
 			// TODO: handle exception
 			e.printStackTrace();
 		} finally {
-			DBUtils.close2param(connection, ps);
+			MyDBUtils.close2param(connection, ps);
 			System.out.println("insert success");
 		}
 	}

@@ -1,5 +1,5 @@
 <%@page import="java.sql.Statement"%>
-<%@page import="sopo.cn.utils191007.DBUtils"%>
+<%@page import="sopo.cn.utils191007.MyDBUtils"%>
 <%@page import="java.sql.Connection"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
@@ -33,7 +33,7 @@
 	Statement statement = null;
 	
 	try{
-		connection = DBUtils.getInstance().getConnection();
+		connection = MyDBUtils.getInstance().getConnection();
 		String sql = "INSERT INTO book VALUES( '"+id+"', '"+bookname+"', '62.1', '6657814', '2025-1-1');";
 		statement = connection.createStatement();
 		statement.executeUpdate(sql);
@@ -41,10 +41,10 @@
 		e.printStackTrace();
 	} finally{
 		if( statement != null){
-			statement.close();
+	statement.close();
 		}
 		if( connection != null){
-			connection.close();
+	connection.close();
 		}
 		
 		out.print("insert success!");
